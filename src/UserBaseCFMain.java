@@ -40,7 +40,7 @@ import org.apache.mahout.cf.taste.similarity.UserSimilarity;
  */
 public class UserBaseCFMain {
 
-    final static int NEIGHBORHOOD_NUM =10;//邻居数目
+    final static int NEIGHBORHOOD_NUM =20;//邻居数目
     final static int RECOMMENDER_NUM = 100;//推荐物品数目
     private static List<List<Integer>> recomResults = new ArrayList<List<Integer>>();
     private static List<Integer> watchNum = new ArrayList<Integer>();
@@ -58,8 +58,8 @@ public class UserBaseCFMain {
         String file = "item.txt";
        
       DataModel model =new FileDataModel(new File(file));//FileDataModel要求文件数据存储格式（必须用“，”分割）：userID,itemID[,preference[,timestamp]]
-      
       UserSimilarity user = new PearsonCorrelationSimilarity(model);
+//      UserSimilarity user = new PearsonCorrelationSimilarity(model);
         NearestNUserNeighborhood neighbor = new NearestNUserNeighborhood(NEIGHBORHOOD_NUM, user, model);
         Recommender r = new GenericUserBasedRecommender(model, neighbor, user);
         LongPrimitiveIterator iter = model.getUserIDs();
@@ -70,6 +70,9 @@ public class UserBaseCFMain {
             List<RecommendedItem> list = r.recommend(uid, RECOMMENDER_NUM);
 //            System.out.printf("uid:%s", uid);
             for (RecommendedItem ritem : list) {
+            	if (uid == 310) {
+            		System.out.printf("(%s,%f)", ritem.getItemID(), ritem.getValue());
+            	}
 //                System.out.printf("(%s,%f)", ritem.getItemID(), ritem.getValue());
             	recomRes.add((int) ritem.getItemID());
             }
@@ -88,6 +91,7 @@ public class UserBaseCFMain {
 		    while((lineTxt = bufferedReader.readLine()) != null){
 		        watchNum.add(Integer.valueOf(lineTxt));
 		    }
+//		    System.out.println("watchNum = " + watchNum);
 		    read.close();
 		}
 		
@@ -102,10 +106,12 @@ public class UserBaseCFMain {
 		    	String[] proIDs = lineTxt.split(" ");
 //		    	List<Integer> watchList = new ArrayList<Integer>();
 		    	HashMap<Integer, Boolean> watchList = new HashMap<Integer, Boolean>();
+//		    	System.out.println("proIDs.length = " + proIDs.length);
 		    	for (int i = 0; i < proIDs.length-1; i++) {
 		    		watchList.put(Integer.valueOf(proIDs[i]), true);
 		    	}
 		    	watchLists.add(watchList);
+//		    	System.out.println("watchList = " + watchLists.get(watchLists.size()-1));
 		    }
 		    read.close();
 		}
@@ -113,7 +119,12 @@ public class UserBaseCFMain {
 		
 		int cnt = 0;
 		int userID = 0;
-		for (List<Integer> res : recomResults) {
+		for (int ide = 0; ide < recomResults.size(); ide++) {
+			List<Integer> res = recomResults.get(ide);
+			if (ide == 3999) {
+				System.out.println("size = " + res);
+			}
+//		for (List<Integer> res : recomResults) {
 			cnt = 0;
 			int wN = watchNum.get(userID);
 			HashMap<Integer, Boolean> watchList = watchLists.get(userID);
@@ -124,32 +135,45 @@ public class UserBaseCFMain {
 				if (watchList.containsKey(id)) {
 					cnt++;
 				}
-				precision.add((double)cnt/(i+1));
-				recall.add((double)cnt/wN);
+				precision.add(((double)cnt)/(i+1));
+				recall.add(((double)cnt)/wN);
 				i++;
 			}
+//			System.out.println("cnt = " + cnt);
+			if (ide == 3999) {
+				System.out.println("precision = " + precision);
+			}
 			userID++;
+//			System.out.println("precision :" + precision);
 			precisions.add(precision);
 			recalls.add(recall);
 		}
-		
+//		System.out.println("precision 0  :" + precisions.get(0));
+//		System.out.println("precision 0  :" + precisions.get(1));
+//		System.out.println("precision 0  :" + precisions.get(precisions.size()-1).get(0));
 		//平均准确率和召回率
 		int userNum = recomResults.size();
 		for (int i = 0; i < RECOMMENDER_NUM; i++) {
 			double tmp = 0.0;
+//			System.out.println("precisions.size() = " + precisions.size());
+			
 			for (List<Double> precision:precisions) {
-				tmp += precision.get(i);
+				if (precision.size() > i) {
+					tmp += precision.get(i);
+				}
 			}
 			p.add(tmp/userNum);
 			tmp = 0.0;
 			for (List<Double> recall:recalls) {
-				tmp += recall.get(i);
+				if (recall.size() > i) {
+					tmp += recall.get(i);
+				}
 			}
 			reca.add(tmp/userNum);
 		}
 		
-		write("precision.txt", p);
-		write("recall.txt", reca);
+		write("precisionUser.txt", p);
+		write("recallUser.txt", reca);
 		
 		System.out.println("Done");
 		
@@ -174,7 +198,7 @@ public class UserBaseCFMain {
 				    BufferedWriter writer = new BufferedWriter(write);
 				    int userID = 1;
 				    for (Double ele:list) {
-				    	String tmp = String.valueOf(userID) + "," + String.valueOf(ele);
+				    	String tmp = String.valueOf(userID++) + "," + String.valueOf(ele) + "\r\n";
 				    	writer.write(tmp);
 				    }
 				    writer.close();
