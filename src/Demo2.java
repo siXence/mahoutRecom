@@ -63,7 +63,8 @@ public class Demo2 {
         
         
 //        UserSimilarity similarity = new PearsonCorrelationSimilarity(model);
-        UserSimilarity similarity=new CityBlockSimilarity(model);
+//        UserSimilarity similarity=new CityBlockSimilarity(model);
+        UserSimilarity similarity=new EuclideanDistanceSimilarity(model);
 
       //选择邻居用户，使用NearestNUserNeighborhood实现UserNeighborhood接口，选择邻近的4个用户
       UserNeighborhood neighborhood = new NearestNUserNeighborhood(N, similarity, model);
@@ -200,7 +201,7 @@ public class Demo2 {
 //            
 //        };
         
-        Recommender recommender = new SVDRecommender(model,new ALSWRFactorizer(model,100,0.005,20));
+        Recommender recommender = new SVDRecommender(model,new ALSWRFactorizer(model,300,0.005,20));
         //给用户1推荐4个物品
         for (int i = 1; i <= 943; i++) {
 //      	  System.out.println("-------User " + i + "------");
@@ -341,8 +342,8 @@ public class Demo2 {
         DataModel model=new FileDataModel(new File(filepath));
         Demo2 demo=new Demo2();
         
-        
-//        demo.userbased(model, 80);
+//        
+//        demo.userbased(model, 10);
 //        write("precisionUserML.txt", precisionUser);
 //        write("recallUserML.txt", recallUser);
 //        write("F1UserML.txt", userF1);
