@@ -56,6 +56,9 @@ public class Demo2 {
 	private static List<List<Integer>> itemRecomProID = new ArrayList<List<Integer>>();
 	private static List<List<Integer>> svdRecomProID = new ArrayList<List<Integer>>();
 	
+	private static int userNum = 943;
+//	private static int userNum = 4000;
+	
     public void userbased(DataModel model,int n) throws TasteException{
         System.out.println("-----------------------------------------------------------------------------");
         RandomUtils.useTestSeed();
@@ -72,7 +75,7 @@ public class Demo2 {
       Recommender recommender = new GenericUserBasedRecommender(model, neighborhood, similarity);
 
       //给用户1推荐4个物品
-      for (int i = 1; i <= 943; i++) {
+      for (int i = 1; i <= userNum; i++) {
 //    	  System.out.println("-------User " + i + "------");
     	  List<RecommendedItem> recommendations = recommender.recommend(i, 100);
     	  List<Long> proIDs = new ArrayList<Long>();
@@ -152,7 +155,7 @@ public class Demo2 {
     	
         Recommender recommend=new GenericItemBasedRecommender(model,similarity);
       //给用户1推荐4个物品
-        for (int i = 1; i <= 943; i++) {
+        for (int i = 1; i <= userNum; i++) {
 //      	  System.out.println("-------User " + i + "------");
       	  List<RecommendedItem> recommendations = recommend.recommend(i, 100);
       	  List<Long> proIDs = new ArrayList<Long>();
@@ -201,9 +204,9 @@ public class Demo2 {
 //            
 //        };
         
-        Recommender recommender = new SVDRecommender(model,new ALSWRFactorizer(model,320,0.05,30));
+        Recommender recommender = new SVDRecommender(model,new ALSWRFactorizer(model,300,0.05,20));
         //给用户1推荐4个物品
-        for (int i = 1; i <= 943; i++) {
+        for (int i = 1; i <= userNum; i++) {
 //      	  System.out.println("-------User " + i + "------");
       	  List<RecommendedItem> recommendations = recommender.recommend(i, 100);
       	  List<Long> proIDs = new ArrayList<Long>();
@@ -343,10 +346,10 @@ public class Demo2 {
         Demo2 demo=new Demo2();
         
 //        
-//        demo.userbased(model, 10);
-//        write("precisionUserML.txt", precisionUser);
-//        write("recallUserML.txt", recallUser);
-//        write("F1UserML.txt", userF1);
+        demo.userbased(model, 8);
+        write("precisionUserML.txt", precisionUser);
+        write("recallUserML.txt", recallUser);
+        write("F1UserML.txt", userF1);
         
 //        write("precisionUserTW.txt", precisionUser);
 //        write("recallUserTW.txt", recallUser);
@@ -360,10 +363,10 @@ public class Demo2 {
 ////        write("recallItemTW.txt", recallItem);
 //        
 ////        demo.slope_one(model);
-        demo.SVD(model);
-        write("precisionSVDML.txt", precisionSVD);
-        write("recallSVDML.txt", recallSVD);
-      write("F1SVDML.txt", svdF1);
+//        demo.SVD(model);
+//        write("precisionSVDML.txt", precisionSVD);
+//        write("recallSVDML.txt", recallSVD);
+//      write("F1SVDML.txt", svdF1);
 //        
 ////        write("precisionSVDTW.txt", precisionSVD);
 ////        write("recallSVDTW.txt", recallSVD);
