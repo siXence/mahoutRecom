@@ -201,7 +201,7 @@ public class Demo2 {
 //            
 //        };
         
-        Recommender recommender = new SVDRecommender(model,new ALSWRFactorizer(model,300,0.005,20));
+        Recommender recommender = new SVDRecommender(model,new ALSWRFactorizer(model,320,0.05,30));
         //给用户1推荐4个物品
         for (int i = 1; i <= 943; i++) {
 //      	  System.out.println("-------User " + i + "------");
